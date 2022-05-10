@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+
+import os
+from os import path
+import sys
+import time
+import random
+import string
+import socket
+from test_helpers import get_open_port, Popen, PIPE
+
+
+def main():
+    # generate random data to send
+    content = ''.join(random.choice(string.ascii_letters) for _ in range(20))
+    content = content.encode()
+
+    abs_builddir = os.environ['abs_builddir']
+
+    # run udp_to_tcp
+    udp_to_tcp = path.abspath(
+        path.join(abs_builddir, os.pardir, 'forwarder', 'udp_to_tcp'))
+    udp_port = get_open_port()
+    tcp_port = get_open_port()
+    udp_to_tcp_proc = Popen([udp_to_tcp, str(udp_port), str(tcp_port)],
+                             stderr=PIPE)
+
+    sys.stderr.write(udp_to_tcp_proc.stderr.readline().decode())
+
+    # create TCP socket
+    tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_sock.connect(('127.0.0.1', tcp_port))
+
+    sys.stderr.write(udp_to_tcp_proc.stderr.readline().decode())
+
+    # send content over UDP socket
+    udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_sock.sendto(content, ('127.0.0.1', udp_port))
+
+    # receive data from TCP socket
+    data = tcp_sock.recv(len(content))
+
+    # terminate connections and the udp_to_tcp
+    udp_sock.close()
+    tcp_sock.close()
+    udp_to_tcp_proc.terminate()
+
+    if data != content:
+        sys.exit('data received not equal to the data sent')
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,245 @@
+channel_configs:
+  abc:
+    audio:
+    - 128k
+    - 64k
+    - 32k
+    live: true
+    present_delay_chunk: 300
+    video:
+      1280x720:
+      - 20
+      - 22
+      - 24
+      - 26
+      426x240:
+      - 26
+      640x360:
+      - 24
+      - 26
+      854x480:
+      - 22
+      - 24
+      - 26
+  cbs:
+    audio:
+    - 128k
+    - 64k
+    - 32k
+    live: true
+    present_delay_chunk: 300
+    video:
+      1280x720:
+      - 20
+      - 22
+      - 24
+      - 26
+      1920x1080:
+      - 22
+      - 24
+      426x240:
+      - 26
+      640x360:
+      - 24
+      854x480:
+      - 24
+      - 26
+  fox:
+    audio:
+    - 128k
+    - 64k
+    - 32k
+    live: true
+    present_delay_chunk: 300
+    video:
+      1280x720:
+      - 20
+      - 22
+      - 24
+      - 26
+      426x240:
+      - 26
+      640x360:
+      - 24
+      - 26
+      854x480:
+      - 22
+      - 24
+      - 26
+  nbc:
+    audio:
+    - 128k
+    - 64k
+    - 32k
+    live: true
+    present_delay_chunk: 300
+    video:
+      1280x720:
+      - 20
+      - 22
+      - 24
+      - 26
+      1920x1080:
+      - 22
+      - 24
+      426x240:
+      - 26
+      640x360:
+      - 24
+      854x480:
+      - 24
+      - 26
+  pbs:
+    audio:
+    - 128k
+    - 64k
+    - 32k
+    live: true
+    present_delay_chunk: 300
+    video:
+      1280x720:
+      - 20
+      - 22
+      - 24
+      - 26
+      1920x1080:
+      - 22
+      - 24
+      426x240:
+      - 26
+      640x360:
+      - 24
+      854x480:
+      - 24
+      - 26
+  univision:
+    audio:
+    - 128k
+    - 64k
+    - 32k
+    live: true
+    present_delay_chunk: 300
+    video:
+      1280x720:
+      - 20
+      - 22
+      - 24
+      - 26
+      426x240:
+      - 26
+      640x360:
+      - 24
+      - 26
+      854x480:
+      - 22
+      - 24
+      - 26
+channels:
+- nbc
+enable_logging: true
+enforce_moving_live_edge: false
+experiments:
+- fingerprint:
+    abr: linear_bba
+    abr_config:
+      upper_reservoir: 0.9
+    cc: bbr
+    cc_config:
+      abr_time: true
+      buffer_length_coef: 100.0
+      history_size: 8
+      nn_roundup: 500
+      quality_change_qoef: 1.0
+      random_cc: false
+      random_sample_size: 100
+      scoring_function_type: ssim
+      server_id: 0
+      server_path: http://localhost:5675
+    ccs:
+    - bbr
+    - vegas
+    - cubic
+  num_servers: 1
+- fingerprint:
+    abr: linear_bba
+    abr_config:
+      upper_reservoir: 0.9
+    cc: bbr
+    cc_config:
+      abr_time: true
+      buffer_length_coef: 100.0
+      history_size: 8
+      nn_roundup: 500
+      quality_change_qoef: 1.0
+      random_cc: false
+      random_sample_size: 100
+      scoring_function_type: ssim
+      server_id: 1
+      server_path: http://localhost:5675
+    ccs:
+    - bbr
+    - vegas
+    - cubic
+  num_servers: 1
+- fingerprint:
+    abr: linear_bba
+    abr_config:
+      upper_reservoir: 0.9
+    cc: bbr
+    cc_config:
+      abr_time: true
+      buffer_length_coef: 100.0
+      history_size: 8
+      nn_roundup: 500
+      quality_change_qoef: 1.0
+      random_cc: false
+      random_sample_size: 100
+      scoring_function_type: ssim
+      server_id: 2
+      server_path: http://localhost:5675
+    ccs:
+    - bbr
+    - vegas
+    - cubic
+  num_servers: 1
+- fingerprint:
+    abr: linear_bba
+    abr_config:
+      upper_reservoir: 0.9
+    cc: bbr
+    cc_config:
+      abr_time: true
+      buffer_length_coef: 100.0
+      history_size: 8
+      nn_roundup: 500
+      quality_change_qoef: 1.0
+      random_cc: false
+      random_sample_size: 100
+      scoring_function_type: ssim
+      server_id: 3
+      server_path: http://localhost:5675
+    ccs:
+    - bbr
+    - vegas
+    - cubic
+  num_servers: 1
+influxdb_connection:
+  dbname: puffer1
+  host: 127.0.0.1
+  password: INFLUXDB_PASSWORD
+  port: 8086
+  user: puffer1
+log_dir: /home/ubuntu/puffer/src/monitoring
+media_dir: /home/ubuntu/puffer/media-181230
+portal_settings:
+  allowed_hosts:
+  - '*'
+  debug: true
+  secret_key: PUFFER_PORTAL_SECRET_KEY
+postgres_connection:
+  dbname: puffer1
+  host: 127.0.0.1
+  password: PUFFER_PORTAL_DB_KEY
+  port: 5432
+  user: puffer1
+ws_port: 9360

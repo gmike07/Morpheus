@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+import os
+from os import path
+from test_helpers import check_call
+
+
+def main():
+    abs_builddir = os.environ['abs_builddir']
+    ssim = path.abspath(path.join(abs_builddir, os.pardir, 'ssim', 'ssim'))
+
+    test_vectors = path.join(abs_builddir, 'test-vectors')
+    test_tmpdir = path.join(abs_builddir, 'test_tmpdir')
+
+    # test the program "ssim"
+    video1 = path.join(test_vectors, 'ssim', '480p-to-720p.y4m')
+    video2 = path.join(test_vectors, 'ssim', 'canonical-720p.y4m')
+    output_ssim_file = path.join(test_tmpdir, 'output.ssim')
+    check_call([ssim, video1, video2, output_ssim_file])
+
+    # compare the output with the solution
+    solution_file = path.join(test_vectors, 'ssim', 'sol.ssim')
+
+    with open(solution_file) as fh:
+        solution = fh.readline()
+
+    with open(output_ssim_file) as fh:
+        output_ssim = fh.readline()
+
+    print('output=%s' % output_ssim)
+    print('solution=%s' % solution)
+
+    if solution != output_ssim:
+        exit('output SSIM is different from the solution')
+
+
+if __name__ == '__main__':
+  main()

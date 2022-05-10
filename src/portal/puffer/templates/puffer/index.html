@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117951942-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-117951942-2');
+    gtag('config', 'AW-771906819');
+  </script>
+  <link rel="stylesheet" href="{% static 'puffer/dist/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'puffer/css/common.css' %}">
+  <title>Puffer</title>
+  <link rel="icon" href="{% static 'puffer/dist/images/favicon.ico' %}">
+</head>
+
+<body>
+  <!-- Navigation -->
+  {% include "puffer/navigation.html" %}
+
+  <!-- Jumbotron -->
+  <div class="jumbotron">
+    <div class="container text-center">
+      <div class="row justify-content-center">
+        <div class="col-md-7">
+        <img class="mb-4" src="{% static 'puffer/dist/images/logo-full.svg' %}"
+             alt="Puffer" height="160px">
+
+        <p>Stream live TV in your browser. There's no charge. You can watch U.S. TV stations affiliated with the NBC, CBS,
+        ABC, PBS, FOX, and Univision networks.</p>
+
+        <p>Puffer works well in the Chrome, Firefox, and Edge browsers,
+          on a computer or an Android phone or tablet.
+          Puffer <b>does not</b> work on iPhones or iPads or in the Safari browser.</p>
+
+        <p>Puffer is a research project in the computer-science
+department at Stanford University. Please see our <a href="{% url 'faq' %}">FAQ</a> for more information.</p>
+
+        {% if user.is_authenticated %}
+        <a role="button" class="btn btn-primary btn-lg" href="{% url 'player' %}">Watch TV</a>
+        {% else %}
+        <a role="button" class="btn btn-primary" href="{% url 'signup' %}">Sign up</a>
+        <a role="button" class="btn btn-outline-primary" href="{% url 'player' %}">Log in</a>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer font-small pb-3">
+    <div class="container">
+      <div class="row text-center d-flex justify-content-center">
+        <div class="col-md-2">
+          <a href="{% url 'terms' %}">Terms of Participation</a>
+        </div>
+
+        <div class="col-md-2">
+          <a href="https://groups.google.com/forum/#!forum/puffer-stanford">Contact</a>
+        </div>
+
+        <div class="col-md-2">
+          <a href="mailto:puffer-copyright-notices@cs.stanford.edu">Copyright complaints</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'puffer/dist/js/jquery-3.3.1.slim.min.js' %}"></script>
+  <script src="{% static 'puffer/dist/js/bootstrap.min.js' %}"></script>
+</body>
+
+</html>

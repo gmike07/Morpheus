@@ -1,0 +1,26 @@
+#!/bin/bash -ex
+
+pwd="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [ -z $abs_builddir ]; then
+    $abs_builddir=$pwd
+fi
+
+# fetch the files
+TEST_VECTOR="test-vectors"
+
+MPD_WRITER=$abs_builddir/../mpd/mpd_writer
+MPD_DIR="$TEST_VECTOR/mpd"
+REFERENCE="$MPD_DIR/reference.mpd"
+MP4_SEG="$MPD_DIR/video/ $MPD_DIR/audio/"
+
+MPD_OUTPUT="$test_tmpdir/output.mpd"
+
+MPD_ARG="-p 1400000000 -o $MPD_OUTPUT"
+
+# run the command
+$MPD_WRITER $MP4_SEG $MPD_ARG
+
+# compare the result
+diff $MPD_OUTPUT $REFERENCE
+exit $?

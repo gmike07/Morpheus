@@ -1,0 +1,45 @@
+#!/usr/bin/python3
+
+import os
+from os import path
+import sys
+import time
+import datetime
+from test_helpers import check_call, check_output
+
+
+def main():
+    abs_srcdir = os.environ['abs_srcdir']
+
+    abs_builddir = os.environ['abs_builddir']
+    test_tmpdir = path.join(abs_builddir, 'test_tmpdir')
+
+    cleaner_testdir = path.join(test_tmpdir, 'cleaner_testdir')
+
+    check_call(['mkdir', '-p', cleaner_testdir])
+
+    test_file1 = path.join(cleaner_testdir, 't1')
+    test_file2 = path.join(cleaner_testdir, 't2')
+
+    cleaner = path.abspath(
+            path.join(abs_builddir, os.pardir, 'cleaner', 'cleaner'))
+
+    cmd = [cleaner, cleaner_testdir, '-p', 't\d+', '-t', '50']
+
+    time_string = datetime.datetime.fromtimestamp(0).strftime(
+            '%b %m %Y %H:%M:%S')
+    check_call(['touch', test_file1, '-d', time_string])
+
+    check_call(['touch', test_file2])
+
+    # run the cleaner
+    print(check_output(cmd))
+    # this should only delete t1
+    if os.path.isfile(test_file1):
+        exit(1)
+    if not os.path.isfile(test_file2):
+        exit(1)
+
+
+if __name__ == '__main__':
+    main()

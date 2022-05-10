@@ -1,0 +1,25 @@
+#!/bin/bash -ex
+
+# fetch the files
+TEST_VECTOR="test-vectors"
+
+MP4_FRAGMENT=$abs_builddir/../mp4/mp4_fragment
+MP4_DIR="$TEST_VECTOR/mp4"
+REFERENCE_INIT="$MP4_DIR/init.mp4"
+REFERENCE_SEG_0="$MP4_DIR/0.m4s"
+REFERENCE_SEG_1="$MP4_DIR/180180.m4s"
+SEG_0_INPUT="$MP4_DIR/0.mp4"
+SEG_1_INPUT="$MP4_DIR/180180.mp4"
+
+INIT_OUTPUT="$test_tmpdir/init.mp4"
+SEG_0_OUTPUT="$test_tmpdir/0.m4s"
+SEG_1_OUTPUT="$test_tmpdir/180180.m4s"
+
+# run the commands
+$MP4_FRAGMENT -i $INIT_OUTPUT -m $SEG_0_OUTPUT $SEG_0_INPUT
+$MP4_FRAGMENT -i $INIT_OUTPUT -m $SEG_1_OUTPUT $SEG_1_INPUT
+
+# compare the result
+diff $INIT_OUTPUT $REFERENCE_INIT
+diff $SEG_0_OUTPUT $REFERENCE_SEG_0
+diff $SEG_1_OUTPUT $REFERENCE_SEG_1
