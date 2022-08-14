@@ -17,6 +17,7 @@ sudo apt-get install -y -q gcc-7 g++-7 libmpeg2-4-dev libpq-dev \
                           git automake libtool python python3 cmake wget chromium-browser unzip apache2
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 99
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 99
+sudo apt-get install -y pkg-config libcurlpp-dev libcurl4-openssl-dev
 sudo apt install -y mahimahi
 sudo apt remove -y mahimahi
 
