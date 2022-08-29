@@ -31,6 +31,7 @@ cd ..
 cd third_party/
 wget https://github.com/StanfordSNR/pytorch/releases/download/v1.0.0-puffer/libtorch.tar.gz
 tar -xvf libtorch.tar.gz
+rm libtorch.tar.gz
 # export PATH="$cwd:$PATH"
 # source ~/.bashrc
 cd ..
