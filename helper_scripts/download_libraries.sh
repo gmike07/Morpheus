@@ -1,6 +1,7 @@
 cd ..
 # git branch -a
 # git checkout amazon_congestion_control
+git submodule sync --recursive
 git submodule update --recursive --init
 
 sudo apt-get update -qq
