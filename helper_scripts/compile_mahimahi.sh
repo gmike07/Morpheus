@@ -1,3 +1,4 @@
+#!/bin/bash
 cd ..
 cd mahimahi
 sudo apt-get install protobuf-compiler -y
