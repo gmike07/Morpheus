@@ -19,6 +19,19 @@ sudo apt-get install -y -q gcc-7 g++-7 libmpeg2-4-dev libpq-dev \
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 99
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 99
 sudo apt-get install -y pkg-config libcurlpp-dev libcurl4-openssl-dev
+sudo apt install python3-pip -y
+sudo apt install python3 -y
+pip3 install django psycopg2-binary influxdb pyyaml matplotlib flask tqdm
+pip3 install django[argon2]
+sudo apt install postgresql -y
+
+wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+source /etc/lsb-release
+echo "deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+sudo apt-get update -y && sudo apt-get install influxdb -y
+sudo systemctl unmask influxdb.service
+sudo systemctl start influxdb
+
 sudo apt install -y mahimahi
 sudo apt remove -y mahimahi
 
@@ -36,5 +49,8 @@ rm libtorch.tar.gz
 # export PATH="$cwd:$PATH"
 # source ~/.bashrc
 cd ..
-
+cd third_party/
+rm -rf libwebm.fork/
+mv libwebm_2.fork/ libwebm.fork/
+cd ..
 cd helper_scripts
