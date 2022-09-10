@@ -9,7 +9,7 @@ echo '======================================'
 echo enter the following commands:
 echo '1. sudo -u postgres psql'
 echo '2. CREATE DATABASE puffer1;'
-echo "3. CREATE USER puffer1 WITH PASSWORD \'<postgres password>\';"
+echo "3. CREATE USER puffer1 WITH PASSWORD \'<postgres password>\'; (in my case '1')"
 echo '4. GRANT ALL PRIVILEGES ON DATABASE puffer1 TO puffer1;'
 echo '5. \\q'
 echo '======================================'
@@ -24,7 +24,7 @@ echo 1. sudo systemctl restart influxdb
 echo 2. influx
 echo 3. auth
 echo 4. username: puffer1
-echo 5. "password: <influxdb password>"
+echo 5. "password: <influxdb password> (in my case 1)"
 echo 6. "CREATE DATABASE puffer1"
 echo 7. "SHOW DATABASES"
 echo 8. "exit"
