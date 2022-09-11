@@ -1,6 +1,7 @@
 #!/bin/bash
 cd ..
 cd mahimahi
+sudo apt install dnsmasq -y
 sudo apt-get install iptables -y
 sudo apt-get install protobuf-compiler -y
 # download protobuf
