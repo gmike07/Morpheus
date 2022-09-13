@@ -69,25 +69,27 @@ def main(traces_file, min_average_throughput, max_average_throughput):
     line_counter = 0
     with open(traces_file, 'r') as f:
         for line in f:
-            parse = line.split(',')
-            uid = parse[0]
-            dtime = (datetime.datetime.strptime(parse[1], '%Y-%m-%d %H:%M:%S')
-                     - TIME_ORIGIN).total_seconds()
-            target = parse[2]
-            address = parse[3]
-            throughput = float(parse[6])  # bytes per second
+            try: 
+                parse = line.split(',')
+                uid = parse[0]
+                dtime = (datetime.datetime.strptime(parse[1], '%Y-%m-%d %H:%M:%S')
+                        - TIME_ORIGIN).total_seconds()
+                target = parse[2]
+                address = parse[3]
+                throughput = float(parse[6])  # bytes per second
 
-            k = (uid, target)
+                k = (uid, target)
 
-            if k in bw_measurements:
-                bw_measurements[k].append(throughput)
-            else:
-                bw_measurements[k] = [throughput]
+                if k in bw_measurements:
+                    bw_measurements[k].append(throughput)
+                else:
+                    bw_measurements[k] = [throughput]
 
-            line_counter += 1
-            if line_counter >= NUM_LINES:
-                break
-    
+                line_counter += 1
+                if line_counter >= NUM_LINES:
+                    break
+            except Exception as e:
+                pass
     c = 0
     bw_keys = list(bw_measurements.keys())
     random.shuffle(bw_keys)
