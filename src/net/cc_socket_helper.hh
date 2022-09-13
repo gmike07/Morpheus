@@ -132,6 +132,8 @@ public:
   int get_congestion_control_index();
 
   void select_new_cc(double new_ssim);
+  
+  int connection_id(){return client_.connection_id();}
 
 };
 
