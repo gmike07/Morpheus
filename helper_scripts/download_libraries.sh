@@ -55,8 +55,8 @@ rm libtorch.tar.gz
 # source ~/.bashrc
 cd ..
 cd third_party/
-rm -rf libwebm.fork/
-mv libwebm_2.fork/ libwebm.fork/
+# rm -rf libwebm.fork/
+# mv libwebm_2.fork/ libwebm.fork/
 cd ..
 cd helper_scripts
 
