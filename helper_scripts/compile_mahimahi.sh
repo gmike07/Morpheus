@@ -25,7 +25,7 @@ sudo apt-get install libxcb-xrm-dev -y
 sudo apt-get install libxcb-present-dev -y
 sudo apt-get install -y libsdl-pango-dev -y 
 sudo apt install git-buildpackage -y
-sudo apt autoremove
+sudo apt autoremove -y
 sudo ./autogen.sh
 sudo ./configure
 cd src
