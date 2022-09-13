@@ -21,6 +21,7 @@
 
 traces/cooked/
 traces/mahimahi/
+mahimahi/protobuf-3.6.1/
 
 weights/policy/
 weights/ttp/
