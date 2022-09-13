@@ -27,6 +27,8 @@ sudo apt install python3 -y
 pip3 install django psycopg2-binary influxdb pyyaml matplotlib flask tqdm
 pip3 install django[argon2]
 sudo apt install postgresql -y
+sudo apt-get install python-pip python-tk -y
+pip install matplotlib scipy
 
 wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -
 source /etc/lsb-release
@@ -57,3 +59,15 @@ rm -rf libwebm.fork/
 mv libwebm_2.fork/ libwebm.fork/
 cd ..
 cd helper_scripts
+
+pip3 install torch==1.0.0 torchvision==0.2.1 -f https://download.pytorch.org/whl/torch_stable.html
+pip3 install pandas
+pip3 install sklearn
+
+sysctl net.ipv4.tcp_available_congestion_control
+echo 'net.core.default_qdisc=fq' | sudo tee -a /etc/sysctl.conf
+echo 'net.ipv4.tcp_congestion_control=cubic' | sudo tee -a /etc/sysctl.conf
+echo 'net.ipv4.tcp_congestion_control=vegas' | sudo tee -a /etc/sysctl.conf
+echo 'net.ipv4.tcp_congestion_control=bbr' | sudo tee -a /etc/sysctl.conf
+sudo sysctl --system
+sysctl net.ipv4.tcp_available_congestion_control
