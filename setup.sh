@@ -12,5 +12,5 @@ cd $cwd
 ./setup_dbs.sh #setup the databases to store the emulation
 cd $cwd
 ./migrate.sh # define symbolic links
-cd $cwd
-./create_trace.sh # create traces to run on
+# cd $cwd
+# ./create_trace.sh # create traces to run on
