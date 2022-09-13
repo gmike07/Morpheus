@@ -39,7 +39,7 @@ void logging_cc_func(TCPSocket* socket)
   std::this_thread::sleep_for(std::chrono::milliseconds(MILLISECONDS_TO_SLEEP));
 
   try{
-    while(true)
+    while(sock_helper->connection_id() == 0)
     {
       for(auto& handler: handlers)
       {
