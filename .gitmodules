@@ -1,5 +1,5 @@
-[submodule "third_party/libwebm.fork"]
-	path = third_party/libwebm.fork
+[submodule "third_party/libwebm_2.fork"]
+	path = third_party/libwebm_2.fork
 	url = https://github.com/StanfordSNR/libwebm.git
 [submodule "third_party/json.upstream"]
 	path = third_party/json.upstream
@@ -15,6 +15,6 @@
 [submodule "path/to"]
 	path = path/to
 	url = https://github.com/StanfordSNR/dist-for-puffer.git
-[submodule "third_party/libwebm_2.fork"]
-	path = third_party/libwebm_2.fork
+[submodule "third_party/libwebm.fork"]
+	path = third_party/libwebm.fork
 	url = https://github.com/StanfordSNR/libwebm.git
