@@ -39,7 +39,7 @@ def get_delay_loss():
 
 
 def run_offline_media_servers():
-    run_server_html_cmd = './helper_scripts/python_migrate.sh'
+    run_server_html_cmd = f"./helper_scripts/python_migrate.sh {get_config()['serving_port']}"
     p1 = subprocess.Popen(run_server_html_cmd, shell=True, preexec_fn=os.setsid)
     time.sleep(5)
     run_servers_cmd = './helper_scripts/python_run_servers.sh'
@@ -50,7 +50,7 @@ def run_offline_media_servers():
 
 def clear_and_kill_all():
     kill_all_proccesses()
-    subprocess.check_call("rm -rf ./*.profile", shell=True, executable='/bin/bash')
+    subprocess.check_call("sudo rm -rf ./*.profile", shell=True, executable='/bin/bash')
 
 
 def signal_handler(sig, frame):
@@ -72,8 +72,8 @@ def get_mahimahi_command(trace_dir, filename, trace_index, delays, losses, seed=
     mahimahi_chrome_cmd += f"{pathlib.Path().resolve()}/src/media-server/12mbps "
     mahimahi_chrome_cmd += get_trace_path(trace_dir, filename) + " "
     # mahimahi_chrome_cmd += "--downlink-log={} ".format('./uplink/uplink_1.up')
-    mahimahi_chrome_cmd += "-- sh -c 'chromium-browser disable-infobars --disable-gpu --disable-software-rasterizer --headless --enable-logging=true --v=1 --remote-debugging-port={} http://$MAHIMAHI_BASE:8080/player/?wsport={} --user-data-dir=./{}.profile'".format(
-                        remote_port, port, port)
+    mahimahi_chrome_cmd += "-- sh -c 'chromium-browser disable-infobars --disable-gpu --disable-software-rasterizer --headless --enable-logging=true --v=1 --remote-debugging-port={} http://$MAHIMAHI_BASE:{}/player/?wsport={} --user-data-dir=./{}.profile'".format(
+                        remote_port, get_config()['serving_port'],port, port)
     # print(mahimahi_chrome_cmd)
     helper_command = f'export PATH="{pathlib.Path().resolve()}/mahimahi/src/frontend:$PATH"'
     return helper_command + " && " + mahimahi_chrome_cmd
@@ -142,7 +142,7 @@ def run_single_simulation(num_clients, clients, f, seed, ms=5000):
     kill_proccesses(plist[:2])
 
     send_clear_to_server()
-    subprocess.check_call("rm -rf ./*.profile", shell=True,
+    subprocess.check_call("sudo rm -rf ./*.profile", shell=True,
                             executable='/bin/bash')
     with open(get_config()['logs_path'] + get_config()['train_test_log_file'], 'w') as f_log:
         f_log.write(f"{get_config()['model_name']}:\n")
@@ -172,7 +172,7 @@ def start_maimahi_clients(clients, exit_condition):
         print("exception: " + str(e))
     finally:
         kill_proccesses(plist)
-        subprocess.check_call("rm -rf ./*.profile", shell=True,
+        subprocess.check_call("sudo rm -rf ./*.profile", shell=True,
             executable='/bin/bash')
 
 
@@ -276,7 +276,7 @@ def prepare_env(args=None):
         eval_scores()
         exit()
     subprocess.check_call('sudo sysctl -w net.ipv4.ip_forward=1', shell=True)
-    subprocess.check_call("rm -rf ./*.profile", shell=True,
+    subprocess.check_call("sudo rm -rf ./*.profile", shell=True,
                                       executable='/bin/bash')
 
 
