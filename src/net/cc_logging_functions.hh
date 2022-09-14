@@ -66,7 +66,7 @@ static uint64_t get_timestamp_ms()
 static void change_cc(SocketHelper& socket_helper, std::string cc)
 {
   socket_helper.set_congestion_control(cc);
-  std::cerr << "cc: " << cc << std::endl;
+  std::cerr << "\033[35m" << "cc: " << cc <<  "\033[39m" << std::endl;
 }
 
 /*

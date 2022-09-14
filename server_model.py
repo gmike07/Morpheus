@@ -1,6 +1,7 @@
 import json
+import time
 import numpy as np
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, BaseHTTPRequestHandler, SimpleHTTPRequestHandler
 from threading import Thread, Event
 import sys
 from models.model_creator import create_model
@@ -13,8 +14,25 @@ from contextlib import redirect_stdout, redirect_stderr
 import signal
 import socket
 from typing import *
-
+from queue import Queue
 httpd = None
+
+
+class Arguments:
+    def __init__(self):
+        self.other_thread = None
+        self.event_thread = None
+        self.model_name = None
+        self.model = None
+        self.logger = open('./all_logs_server_model.txt', 'w')
+        self.data_recieved = [Queue() for _ in range(get_config()['num_clients'])]
+        self.data_to_send = [Queue() for _ in range(get_config()['num_clients'])]
+
+    def print_redirect(self, message):
+        with redirect_stdout(self.logger):
+            print(message)
+        self.logger.flush()
+        print(message)
 
 
 def signal_handler(sig, frame):
@@ -32,38 +50,27 @@ def get_lambda_trainer(model, model_name, event, f=None):
     if model_name in ['DRL', 'REINFORCE', 'REINFORCE_AE']:
         return lambda: train_rl(model, event)
 
-def get_server_model(models_lst):   
-    other_thread = [None]
-    event_thread = [None]
-    model_name = [None]
-    finished_server_ids = [set()]
-    helper_logger = [open('./all_logs_server_model.txt', 'w')]
+
+def get_server_model(arguments):
     class HandlerClass(BaseHTTPRequestHandler):
         def default_headers(self):
             self.send_response(200, 'OK')
             self.end_headers()
-
 
         def do_GET(self):
             self.send_response(200)
             self.end_headers()
 
         def handle_clear(self):
-            with redirect_stdout(helper_logger[0]):
-                print('clearing...')
-            print('clearing...')
-            if models_lst[0] is not None:
-                models_lst[0].clear()
-            finished_server_ids[0] = set()
+            arguments.print_redirect('clearing...')
+            if arguments.model is not None:
+                arguments.model.clear()
             return self.default_headers()
 
         def handle_done(self):
-            with redirect_stdout(helper_logger[0]):
-                print('done...')
-            print('done...')
-            if models_lst[0] is not None:
-                models_lst[0].done()
-            finished_server_ids[0] = set()
+            arguments.print_redirect('done...')
+            if arguments.model is not None:
+                arguments.model.done()
             return self.default_headers()
 
         def handle_test(self, is_test):
@@ -76,66 +83,53 @@ def get_server_model(models_lst):
             self.wfile.write(json.dumps({'cc': str(prediction)}).encode('utf-8'))
 
         def handle_state(self, parsed_data):
-            if parsed_data['server_id'] in finished_server_ids[0]:
-                print('ignore state', parsed_data['server_id'] - 1)
-                return self.send_OK_and_prediction(0)
             parsed_data['server_id'] -= 1
             parsed_data['state'] = np.array(parsed_data['state']).reshape(1, -1)
             print('predicting server', parsed_data['server_id'], end=' ')
-            models_lst[0].update(parsed_data)
-            prediction = models_lst[0].predict(parsed_data)
+            arguments.model.update(parsed_data)
+            prediction = arguments.model.predict(parsed_data)
             print('prediction is', prediction)
             self.send_OK_and_prediction(prediction)
 
         def handle_stateless(self, parsed_data):
-            if parsed_data['server_id'] in finished_server_ids[0]:
-                print('ignore state', parsed_data['server_id'] - 1)
-                return self.send_OK_and_prediction(0)
             parsed_data['server_id'] -= 1
             print('predicting server', parsed_data['server_id'], end=' ')
-            prediction = models_lst[0].predict(parsed_data)
+            prediction = arguments.model.predict(parsed_data)
             print('prediction is', prediction)
             self.send_OK_and_prediction(prediction)
 
 
         def handle_switch(self, parsed_data):
-            with redirect_stdout(helper_logger[0]):
-                print(f"switching to model {parsed_data['model_name']} and load: {parsed_data['load']}")
-            helper_logger[0].flush()
-            print(f"switching to model {parsed_data['model_name']} and load: {parsed_data['load']}")
-            finished_server_ids[0] = set()
-            if model_name[0] == parsed_data['model_name'] and parsed_data['model_name'] != 'stackingModel':
-                if requires_helper_model(model_name[0]):
-                    with redirect_stdout(helper_logger[0]):
-                        models_lst[0].update_helper_model(create_model(get_config()['num_clients'], parsed_data['helper_model']))
-                    helper_logger[0].flush()
+            arguments.print_redirect(f"switching to model {parsed_data['model_name']} and load: {parsed_data['load']}")
+            if arguments.model_name == parsed_data['model_name'] and parsed_data['model_name'] != 'stackingModel':
+                if requires_helper_model(arguments.model_name):
+                    with redirect_stdout(arguments.logger):
+                        arguments.model.update_helper_model(create_model(get_config()['num_clients'], parsed_data['helper_model']))
+                    arguments.logger.flush()
                 return self.default_headers()
             get_config()['batch_size'] = 1
-            if models_lst[0] is not None:
-                if event_thread[0] is not None:
-                    event_thread[0].set()
-                models_lst[0].save()
+            if arguments.model is not None:
+                if arguments.event_thread is not None:
+                    arguments.event_thread.set()
+                arguments.model.save()
             
-            models_lst[0] = None
-            other_thread[0] = None
-            event_thread[0] = None
+            arguments.model, arguments.other_thread, arguments.event_thread = None, None, None
             if len(parsed_data['models']) != 0:
                 get_config()['models'] = parsed_data['models']
-            with redirect_stdout(helper_logger[0]):
-                models_lst[0] = create_model(get_config()['num_clients'], parsed_data['model_name'], parsed_data['helper_model'])
-            helper_logger[0].flush()
+            with redirect_stdout(arguments.logger):
+                arguments.model = create_model(get_config()['num_clients'], parsed_data['model_name'], parsed_data['helper_model'])
+            arguments.logger.flush()
             if parsed_data['load'] is True:
-                models_lst[0].load()
+                arguments.model.load()
             elif not get_config()['test'] and is_threaded_model(parsed_data['model_name']):
-                event_thread[0] = Event()
-                other_thread[0] = Thread(target=get_lambda_trainer(models_lst[0], parsed_data['model_name'], event_thread[0], helper_logger[0]))
-                other_thread[0].start()
-            model_name[0] = parsed_data['model_name']
+                arguments.event_thread = Event()
+                arguments.other_thread = Thread(target=get_lambda_trainer(arguments.model, parsed_data['model_name'], arguments.event_thread, arguments.logger))
+                arguments.other_thread.start()
+            arguments.model_name = parsed_data['model_name']
             return self.default_headers()
 
         def hanlde_message(self, parsed_data):
             if parsed_data['message'] == 'sock finished':
-                finished_server_ids[0] |= {parsed_data['server_id']}
                 print('server', parsed_data['server_id'] - 1, 'finished')
 
         def do_POST(self):
@@ -159,33 +153,109 @@ def get_server_model(models_lst):
                     self.hanlde_message(parsed_data)
                 else:
                     print(parsed_data)
-                    helper_logger[0].write("400-dct is " + str(parsed_data) +'\n')
-                    helper_logger[0].flush()
+                    arguments.logger.write("400-dct is " + str(parsed_data) +'\n')
+                    arguments.logger.flush()
                     self.send_response(400)
                     self.end_headers()
             except Exception as e:
                 print('exception', e)
-                helper_logger[0].write("400-exception is " + str(e) +'\n')
-                helper_logger[0].flush()
+                arguments.logger.write("400-exception is " + str(e) +'\n')
+                arguments.logger.flush()
                 self.send_response(400, "error occurred")
                 self.end_headers()
-    return HandlerClass, helper_logger[0]
+    return HandlerClass, arguments.logger, arguments
 
+
+def state_handler(arguments):
+    class Handler(SimpleHTTPRequestHandler):
+        def __init__(self, *a, **kw):
+            super().__init__(*a, **kw)
+
+        def handle(self) -> None:
+            LEN = 1048576 # 2**20
+            # self.request is the TCP socket connected to the client
+            while True:
+                data = bytearray()
+                while len(data) < LEN:
+                    recv_len = min(4096, LEN - len(data))
+                    packet = self.request.recv(recv_len).strip()
+                    data.extend(packet)
+                try:
+                    body = data.decode("utf-8").strip()
+                    body = body[:body.find('\n')]
+                    args = json.loads(body)
+                    server_id = int(args['server_id']) - 1
+                    arguments.data_recieved[server_id].put(args)
+                    while arguments.data_to_send[server_id].empty():
+                        time.sleep(0.01)
+                    response = arguments.data_to_send[server_id].get()
+                    response_str = json.dumps(response) + '\n'
+                    response_str = response_str.encode("utf-8")
+                    response_str = response_str.ljust(100 - len(response_str), b'0')
+                    self.request.sendall(response_str)
+                except Exception:
+                    print('exception', traceback.format_exc())
+    return Handler, arguments
+
+
+def handle_state(arguments, parsed_data):
+    parsed_data['server_id'] -= 1
+    parsed_data['state'] = np.array(parsed_data['state']).reshape(1, -1)
+    print('predicting server', parsed_data['server_id'], end=' ')
+    arguments.model.update(parsed_data)
+    prediction = arguments.model.predict(parsed_data)
+    print('prediction is', prediction)
+    return  {'cc': str(prediction)}
+
+
+def handle_stateless(arguments, parsed_data):
+    parsed_data['server_id'] -= 1
+    print('predicting server', parsed_data['server_id'], end=' ')
+    prediction = arguments.model.predict(parsed_data)
+    print('prediction is', prediction)
+    return {'cc': str(prediction)}
+
+
+def execute_commands(arguments, json_command):
+    if 'state' in json_command:
+        return handle_state(arguments, json_command)
+    elif 'stateless' in json_command:
+        return handle_stateless(arguments, json_command)
+
+
+def process_states(arguments):
+    while True:
+        for i in range(get_config()['num_clients']):
+            if not arguments.data_recieved[i].empty():
+                response = execute_commands(arguments, arguments.data_recieved[i].get())
+                arguments.data_to_send[i].put(response)
 
 
 def run_server(server_handler, addr, port, server_class=HTTPServer):
     global httpd
     server_address = (addr, port)
-    handler, f = server_handler()
+    handler, f, args = server_handler()
     httpd = server_class(server_address, handler)
     f.write(f"Starting httpd server on {addr}:{port} with model None\n")
     f.flush()
     print(f"Starting httpd server on {addr}:{port} with model None")
-    httpd.serve_forever()
+    thread = Thread(target=lambda: httpd.serve_forever())
+    thread.start()
+
+    # handler to use for state parsing
+    for i in range(1, get_config()['num_clients'] + 1):
+        state_address = (addr, port + i)
+        handler, arguments = state_handler(args)
+        httpd_main = server_class(state_address, handler)
+        print(f'Starting httpd server for server {i} on {addr}:{port + i} with model None')
+        thread = Thread(target=lambda: httpd_main.serve_forever())
+        thread.start()
+
+    process_states(args)
 
 
 if __name__ == '__main__':
     parse_arguments()
-    # signal.signal(signal.SIGINT, signal_handler)
-    # signal.signal(signal.SIGTERM, signal_handler)
-    run_server(lambda: get_server_model([None]), 'localhost', get_config()['server_port'])
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    run_server(lambda: get_server_model(Arguments()), 'localhost', get_config()['server_port'])

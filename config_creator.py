@@ -62,7 +62,7 @@ def create_setting_yaml(test=False):
         fingerprint['cc'] = 'bbr'
         if 'constant' in model_name:
             fingerprint['cc'] = CONFIG['ccs'][int(model_name[len('constant_'):])]
-        fingerprint['cc_config']['server_path'] = f"http://localhost:{CONFIG['server_port']}"
+        fingerprint['cc_config']['server_path'] = f"http://localhost:{CONFIG['server_port'] + i + 1}"
     write_yaml_settings(add_server_index_to_config(experiments_dct))
 
 

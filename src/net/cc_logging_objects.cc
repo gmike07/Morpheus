@@ -26,37 +26,53 @@ void ScoreHandler::operator()()
   socket_helper.is_new_chunk_scoring = false;
 }
 
-std::pair<int, std::string> ServerSender::send_and_receive_str(const std::string& host, const std::string& str, int server_id)
+std::string ServerSender::send_and_receive_str(const std::string& str)
 {
   json data;
   data["message"] = str;
-  data["server_id"] = server_id;
-  return ServerSender::send_and_receive(host, data);
+  return send_and_receive(data);
 }
 
-std::pair<int, std::string> ServerSender::send_and_receive(const std::string& host, const json& js)
+// std::pair<int, std::string> ServerSender::send_and_receive(json& js)
+// {
+//   js["server_id"] = server_id;
+//   std::ostringstream response;
+//   std::list<std::string> header;
+//   header.push_back("Content-Type: application/json");
+
+//   curlpp::Cleanup clean;
+//   curlpp::Easy request;
+//   request.setOpt(new curlpp::options::Url(host));
+//   request.setOpt(new curlpp::options::HttpHeader(header));
+//   request.setOpt(new curlpp::options::PostFields(js.dump()));
+//   request.setOpt(new curlpp::options::PostFieldSize(js.dump().size()));
+//   request.setOpt(new curlpp::options::WriteStream(&response));
+//   try {
+//     request.perform(); // 200 = ok and not enough data to switch, 409 = ok and sent json with {"cc": cc_to switch to}
+//     long status = curlpp::infos::ResponseCode::get(request);
+//     return {status, response.str()};
+//   }
+//   catch (std::exception& e) {
+//     std::cout << "exception " << e.what() << std::endl;
+//   }
+//   return {-1, "error"};
+// }
+
+std::string ServerSender::send_and_receive(json& js)
 {
-  std::ostringstream response;
-  std::list<std::string> header;
-  header.push_back("Content-Type: application/json");
+  js["server_id"] = server_id;
+  char buffer[1048576] = {0};
+  strcpy(buffer, (js.dump() + "\n").c_str());
+  
+  write(sock_, buffer, 1048576);
 
-  curlpp::Cleanup clean;
-  curlpp::Easy request;
-  request.setOpt(new curlpp::options::Url(host));
-  request.setOpt(new curlpp::options::HttpHeader(header));
-  request.setOpt(new curlpp::options::PostFields(js.dump()));
-  request.setOpt(new curlpp::options::PostFieldSize(js.dump().size()));
-  request.setOpt(new curlpp::options::WriteStream(&response));
-  try {
-    request.perform(); // 200 = ok and not enough data to switch, 409 = ok and sent json with {"cc": cc_to switch to}
-    long status = curlpp::infos::ResponseCode::get(request);
-    return {status, response.str()};
-  }
-  catch (std::exception& e) {
-    std::cout << "exception " << e.what() << std::endl;
-  }
-  return {-1, "error"};
+  char recv_buf[100] = {0};
+  read(sock_, recv_buf, 100);
+  std::string response(recv_buf);
+  return response.substr(0, response.find('\n'));
 }
+
+
 
 int ServerSender::send(std::vector<double> state, bool stateless)
 { 
@@ -74,19 +90,11 @@ int ServerSender::send(std::vector<double> state, bool stateless)
   {
     data["stateless"] = "stateless";
   }
-  data["server_id"] = socket_helper.server_id;
   data["qoe"] = socket_helper.get_qoe();
   data["normalized qoe"] = socket_helper.get_normalized_qoe();
 
-  auto pair = ServerSender::send_and_receive(socket_helper.server_path, data);
-  int status = pair.first;
-  std::string response = pair.second;
+  std::string response = send_and_receive(data);
   try {
-    if(status == 400)
-    {
-      std::cout << "error" << std::endl;
-      return -1;
-    }
     auto js = json::parse(response);
     return std::stoi(js["cc"].get<std::string>());
   }

@@ -4,6 +4,10 @@
 #include "cc_logging_functions.hh"
 #include "socket.hh"
 #include "cc_socket_helper.hh"
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 typedef std::vector<double> qoe_sample;
 typedef std::vector<std::vector<double>> chunk_sample;
@@ -36,13 +40,33 @@ private:
 class ServerSender
 {
 public:
-  ServerSender(SocketHelper& socket_helper_): socket_helper(socket_helper_) {};
+  ServerSender(SocketHelper& socket_helper_, const std::string& host_): socket_helper(socket_helper_), server_id(socket_helper_.server_id), 
+  host(host_), sock_(-1), client_fd_(-1) {
+    if ((sock_ = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+      std::cerr << "\033[35m" << "\n Socket creation error \n" << "\033[39m" << std::endl;
+    }
+      struct sockaddr_in serv_addr;
+      serv_addr.sin_family = AF_INET;
+      serv_addr.sin_port = htons(std::stoi(host.substr(host.rfind(':') + 1)));
+
+      if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+          std::cerr << "\033[35m" << "\nInvalid address/ Address not supported \n" << "\033[39m" << std::endl;
+      }
+
+      if ((client_fd_ = connect(sock_, (struct sockaddr*)&serv_addr, sizeof(serv_addr))) < 0) {
+          std::cerr << "\033[35m" << "\nConnection Failed \n" << "\033[39m" << std::endl;
+      }
+  };
   int send(std::vector<double> state, bool stateless=false);
-  static std::pair<int, std::string> send_and_receive(const std::string& host, const json& js);
-  static std::pair<int, std::string> send_and_receive_str(const std::string& host, const std::string& str, int server_id);
+  std::string send_and_receive(json& js);
+  std::string send_and_receive_str(const std::string& str);
   void send_state_and_replace_cc(std::vector<double> state, bool stateless=false);
 private:
   SocketHelper& socket_helper;
+  int server_id;
+  const std::string& host;
+  int sock_;
+  int client_fd_;
 };
 
 
@@ -161,14 +185,14 @@ private:
 class StateServerHandler: public virtual DefaultHandler
 {
 public:
-  StateServerHandler(SocketHelper& socket_helper_, const std::shared_ptr<AbstractHistory>& history_p_r): 
-                                DefaultHandler(socket_helper_), sender(socket_helper_), history_p(history_p_r),
+  StateServerHandler(SocketHelper& socket_helper_, const std::shared_ptr<AbstractHistory>& history_p_r, ServerSender& sender_): 
+                                DefaultHandler(socket_helper_), sender(sender_), history_p(history_p_r),
                                 start_time(get_timestamp_ms()), counter(0), 
                                 nn_roundup(socket_helper_.nn_roundup), abr_time(socket_helper_.abr_time){};
   virtual void operator()();
   virtual ~StateServerHandler()=default;
 private:
-  ServerSender sender;
+  ServerSender& sender;
   std::shared_ptr<AbstractHistory> history_p;
   uint64_t start_time;
   uint64_t counter;

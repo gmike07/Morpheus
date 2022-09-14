@@ -6,7 +6,7 @@
 const int MILLISECONDS_TO_SLEEP = 1;
 
 
-void create_handlers(SocketHelper& socket_helper, std::vector<std::unique_ptr<DefaultHandler>>& handlers)
+void create_handlers(SocketHelper& socket_helper, std::vector<std::unique_ptr<DefaultHandler>>& handlers, ServerSender& sender)
 {
   if(socket_helper.scoring_path != "")
   {
@@ -14,7 +14,7 @@ void create_handlers(SocketHelper& socket_helper, std::vector<std::unique_ptr<De
   }
   if(socket_helper.server_path != "")
   {
-    handlers.push_back(std::unique_ptr<DefaultHandler>(new StateServerHandler(socket_helper, std::make_shared<ChunkHistory>(socket_helper))));
+    handlers.push_back(std::unique_ptr<DefaultHandler>(new StateServerHandler(socket_helper, std::make_shared<ChunkHistory>(socket_helper), sender)));
   }
 }
 
@@ -33,9 +33,8 @@ void logging_cc_func(TCPSocket* socket)
   TCPSocket& sock = *socket;
   SocketHelper* sock_helper = sock.socket_helper_p.get();
   std::vector<std::unique_ptr<DefaultHandler>> handlers(0);
-  std::string server_path = sock_helper->server_path;
-  int server_id = sock_helper->server_id;
-  create_handlers(*sock_helper, handlers);
+  std::shared_ptr<ServerSender> sender(new ServerSender(*sock_helper, sock_helper->server_path));
+  create_handlers(*sock_helper, handlers, *sender);
   std::this_thread::sleep_for(std::chrono::milliseconds(MILLISECONDS_TO_SLEEP));
 
   try{
@@ -50,12 +49,12 @@ void logging_cc_func(TCPSocket* socket)
   }
   catch (const std::exception& e)
   {
-      ServerSender::send_and_receive_str(server_path, "sock finished", server_id);
+      sender->send_and_receive_str("sock finished");
       std::cerr << e.what() << "hmmm" << std::endl;
   }
   catch (...)
   {
-      ServerSender::send_and_receive_str(server_path, "sock finished", server_id);
+      sender->send_and_receive_str("sock finished");
       std::cerr << "hmmm error 2" << std::endl;
   }
 }
