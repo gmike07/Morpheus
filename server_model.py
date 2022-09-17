@@ -2,7 +2,7 @@ import json
 import time
 import numpy as np
 from http.server import HTTPServer, BaseHTTPRequestHandler, SimpleHTTPRequestHandler
-from threading import Thread, Event
+from threading import Thread, Event, Lock
 import sys
 from models.model_creator import create_model
 from models.ae_trainer import train_ae
@@ -27,6 +27,8 @@ class Arguments:
         self.logger = open('./all_logs_server_model.txt', 'w')
         self.data_recieved = [Queue() for _ in range(get_config()['num_clients'])]
         self.data_to_send = [Queue() for _ in range(get_config()['num_clients'])]
+        # self.lock = Lock()
+        # self.locks = [Lock() for _ in range(get_config()['num_clients'])]
 
     def print_redirect(self, message):
         with redirect_stdout(self.logger):
@@ -180,13 +182,30 @@ def state_handler(arguments):
                     recv_len = min(4096, LEN - len(data))
                     packet = self.request.recv(recv_len).strip()
                     data.extend(packet)
+                if not data:
+                    print('DISCONNECTED')
+                    break
                 try:
                     body = data.decode("utf-8").strip()
                     body = body[:body.find('\n')]
                     args = json.loads(body)
+                    if 'message' in args and args['message'] == 'close socket':
+                        response_str = json.dumps({'cc': '0'}) + '\n'
+                        response_str = response_str.encode("utf-8")
+                        response_str = response_str.ljust(100 - len(response_str), b'0')
+                        self.request.sendall(response_str)
+                        return
                     server_id = int(args['server_id']) - 1
+
+                    # arguments.lock.acquire()
                     arguments.data_recieved[server_id].put(args)
-                    while arguments.data_to_send[server_id].empty():
+                    # arguments.lock.release()
+
+                    while True:
+                        # arguments.locks[server_id].acquire()
+                        if not arguments.data_to_send[server_id].empty():
+                            break
+                        # arguments.locks[server_id].release()
                         time.sleep(0.01)
                     response = arguments.data_to_send[server_id].get()
                     response_str = json.dumps(response) + '\n'
@@ -195,6 +214,7 @@ def state_handler(arguments):
                     self.request.sendall(response_str)
                 except Exception:
                     print('exception', traceback.format_exc())
+                    print('the data is:', data.decode("utf-8").strip())
     return Handler, arguments
 
 
@@ -228,7 +248,10 @@ def process_states(arguments):
         for i in range(get_config()['num_clients']):
             if not arguments.data_recieved[i].empty():
                 response = execute_commands(arguments, arguments.data_recieved[i].get())
+                # arguments.locks[i].acquire()
                 arguments.data_to_send[i].put(response)
+                # arguments.locks[i].release()
+
 
 
 def run_server(server_handler, addr, port, server_class=HTTPServer):

@@ -57,4 +57,5 @@ void logging_cc_func(TCPSocket* socket)
       sender->send_and_receive_str("sock finished");
       std::cerr << "hmmm error 2" << std::endl;
   }
+  //sender->close_socket();
 }

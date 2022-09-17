@@ -1,51 +1,25 @@
 Starting httpd server on localhost:5675 with model None
 clearing...
-switching to model DNNTrainer and load: False
-created random model
-created NN model
-created DNN model with scoring ssim_bin_rebuffer
-created DNNTrainer
-saving dnn...  7 32 10.495406566410747
-saving dnn...  2 32 10.259177934156224
-saving dnn...  3 32 9.098304624906923
-saving dnn...  2 32 7.40928638470773
-saving dnn...  4 32 6.255035625241482
-saving dnn...  2 32 6.021582980201142
-saving dnn...  6 32 5.91088099716388
-saving dnn...  4 32 4.296644216828102
-saving dnn...  4 32 2.566592820787349
-saving dnn...  2 32 1.561392631453302
-saving dnn...  2 32 1.0984809928685182
-saving dnn...  3 32 1.4693489490826783
-saving dnn...  2 32 1.1229787309110124
-saving dnn...  1 32 0.961685302931949
-saving dnn...  2 32 1.3602243535897112
-saving dnn...  4 32 1.9244572007013043
-saving dnn...  5 32 2.3943976638032334
-saving dnn...  2 32 2.937359047630913
-saving dnn...  2 32 1.6596756507684092
-saving dnn...  4 32 1.1784716857303315
-saving dnn...  4 32 1.5943759760102707
-saving dnn...  2 32 1.7386153391655885
-saving dnn...  7 32 1.424120131075496
-saving dnn...  4 32 0.7172576970764123
-saving dnn...  9 32 0.2750846397074387
-saving dnn...  5 32 0.09025229277913034
-saving dnn...  5 32 0.07064952149135464
-saving dnn...  3 32 0.02299824159154373
-saving dnn...  1 32 0.05894685864207973
-saving dnn...  4 32 0.11433727414907897
-saving dnn...  3 32 0.2216743436227147
-saving dnn...  3 32 0.40231738462894884
-saving dnn...  5 32 0.6270887045746505
-saving dnn...  4 32 0.5962255235072045
-saving dnn...  6 32 0.4434856523312519
-saving dnn...  6 32 0.4871565572349121
-saving dnn...  4 32 0.5057968940170632
-saving dnn...  1 32 0.33265823795870203
-saving dnn...  7 32 0.26627286459422667
-saving dnn...  7 32 0.08147992285071469
-saving dnn...  4 32 0.09938064885273568
-saving dnn...  4 32 0.2575309885809147
-saving dnn...  3 32 0.49963788723897284
-saving dnn...  7 32 0.2975309890779424
+switching to model stackingModel and load: True
+['constant_0', 'constant_0', 'constant_0', 'constant_0', 'constant_0', 'constant_0', 'constant_0', 'constant_0']
+creatad constant model with value 0
+creatad constant model with value 0
+creatad constant model with value 0
+creatad constant model with value 0
+creatad constant model with value 0
+creatad constant model with value 0
+creatad constant model with value 0
+creatad constant model with value 0
+created stacking model
+clearing...
+clearing...
+clearing...
+clearing...
+clearing...
+clearing...
+clearing...
+clearing...
+clearing...
+clearing...
+clearing...
+clearing...

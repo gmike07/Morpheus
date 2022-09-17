@@ -56,8 +56,30 @@ public:
       if ((client_fd_ = connect(sock_, (struct sockaddr*)&serv_addr, sizeof(serv_addr))) < 0) {
           std::cerr << "\033[35m" << "\nConnection Failed \n" << "\033[39m" << std::endl;
       }
+      // clear_buff();
   };
-  int send(std::vector<double> state, bool stateless=false);
+
+  void clear_buff()
+  {
+    char c;
+    while(read(sock_, &c, 1)){};
+    std::cout << "finished clearing buffer for server id " << socket_helper.server_id << std::endl;
+  }
+
+  void close_socket()
+  {
+    if(sock_ != -1)
+    {
+      send_and_receive_str("close socket");
+      clear_buff();
+      close(sock_); 
+      std::cout << "\033[35m" << "closed socket for sender for server id " << socket_helper.server_id << "\033[39m" << std::endl;
+      sock_ = -1;
+    }
+  }
+
+  ~ServerSender(){close_socket();}
+  int send(std::vector<double>& state, bool stateless=false);
   std::string send_and_receive(json& js);
   std::string send_and_receive_str(const std::string& str);
   void send_state_and_replace_cc(std::vector<double> state, bool stateless=false);

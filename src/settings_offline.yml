@@ -146,8 +146,9 @@ experiments:
     cc: bbr
     cc_config:
       abr_time: true
-      buffer_length_coef: 100.0
+      buffer_length_coef: 200.0
       history_size: 8
+      model_name: constant_0
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -155,7 +156,6 @@ experiments:
       scoring_function_type: ssim
       server_id: 0
       server_path: http://localhost:5676
-      start_stateless: true
     ccs:
     - bbr
     - vegas
@@ -168,8 +168,9 @@ experiments:
     cc: bbr
     cc_config:
       abr_time: true
-      buffer_length_coef: 100.0
+      buffer_length_coef: 200.0
       history_size: 8
+      model_name: constant_0
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -177,7 +178,6 @@ experiments:
       scoring_function_type: ssim
       server_id: 1
       server_path: http://localhost:5677
-      start_stateless: true
     ccs:
     - bbr
     - vegas
@@ -190,8 +190,9 @@ experiments:
     cc: bbr
     cc_config:
       abr_time: true
-      buffer_length_coef: 100.0
+      buffer_length_coef: 200.0
       history_size: 8
+      model_name: constant_0
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -199,7 +200,6 @@ experiments:
       scoring_function_type: ssim
       server_id: 2
       server_path: http://localhost:5678
-      start_stateless: true
     ccs:
     - bbr
     - vegas
@@ -212,8 +212,9 @@ experiments:
     cc: bbr
     cc_config:
       abr_time: true
-      buffer_length_coef: 100.0
+      buffer_length_coef: 200.0
       history_size: 8
+      model_name: constant_0
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -221,7 +222,6 @@ experiments:
       scoring_function_type: ssim
       server_id: 3
       server_path: http://localhost:5679
-      start_stateless: true
     ccs:
     - bbr
     - vegas
@@ -234,8 +234,9 @@ experiments:
     cc: bbr
     cc_config:
       abr_time: true
-      buffer_length_coef: 100.0
+      buffer_length_coef: 200.0
       history_size: 8
+      model_name: constant_0
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -243,7 +244,6 @@ experiments:
       scoring_function_type: ssim
       server_id: 4
       server_path: http://localhost:5680
-      start_stateless: true
     ccs:
     - bbr
     - vegas
@@ -256,8 +256,9 @@ experiments:
     cc: bbr
     cc_config:
       abr_time: true
-      buffer_length_coef: 100.0
+      buffer_length_coef: 200.0
       history_size: 8
+      model_name: constant_0
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -265,7 +266,6 @@ experiments:
       scoring_function_type: ssim
       server_id: 5
       server_path: http://localhost:5681
-      start_stateless: true
     ccs:
     - bbr
     - vegas
@@ -278,8 +278,9 @@ experiments:
     cc: bbr
     cc_config:
       abr_time: true
-      buffer_length_coef: 100.0
+      buffer_length_coef: 200.0
       history_size: 8
+      model_name: constant_0
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -287,7 +288,6 @@ experiments:
       scoring_function_type: ssim
       server_id: 6
       server_path: http://localhost:5682
-      start_stateless: true
     ccs:
     - bbr
     - vegas
@@ -300,8 +300,9 @@ experiments:
     cc: bbr
     cc_config:
       abr_time: true
-      buffer_length_coef: 100.0
+      buffer_length_coef: 200.0
       history_size: 8
+      model_name: constant_0
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -309,7 +310,6 @@ experiments:
       scoring_function_type: ssim
       server_id: 7
       server_path: http://localhost:5683
-      start_stateless: true
     ccs:
     - bbr
     - vegas

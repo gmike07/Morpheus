@@ -74,7 +74,7 @@ std::string ServerSender::send_and_receive(json& js)
 
 
 
-int ServerSender::send(std::vector<double> state, bool stateless)
+int ServerSender::send(std::vector<double>& state, bool stateless)
 { 
   json data;
   if(not stateless)
@@ -100,6 +100,8 @@ int ServerSender::send(std::vector<double> state, bool stateless)
   }
   catch (std::exception& e) {
     std::cout << "exception " << e.what() << std::endl;
+    std::cout << "the response is: " << response << " for server " << socket_helper.server_id << std::endl;
+    clear_buff();
   }
   return -1;
 }
