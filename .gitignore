@@ -21,6 +21,9 @@
 
 traces/cooked/
 traces/mahimahi/
+
+traces/final_traces_jan/
+traces/final_traces_feb/
 mahimahi/protobuf-3.6.1/
 
 weights/policy/
