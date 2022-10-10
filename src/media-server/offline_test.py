@@ -97,6 +97,9 @@ def send_clear_to_server():
 def send_done_to_server():
     send_dct_to_server({'done': 'done'})
 
+def send_kill_to_server():
+    send_dct_to_server({'kill': 'kill'})
+
 
 def send_switch_to_server(model_name, should_load, helper_model='', models=None):
     if models is None:

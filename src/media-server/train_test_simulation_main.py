@@ -8,7 +8,7 @@ parentdir = os.path.dirname(currentdir)
 grandparentdir = os.path.dirname(parentdir)
 sys.path.append(grandparentdir)
 from config_creator import create_config, create_dir, get_config
-from offline_test import clear_and_kill_all, prepare_env, train_simulation, test_simulation, eval_scores, test_simulation_model, eval_scores_model
+from offline_test import send_kill_to_server, clear_and_kill_all, prepare_env, train_simulation, test_simulation, eval_scores, test_simulation_model, eval_scores_model
 import time
 
 
@@ -139,6 +139,7 @@ def main_train_test():
                 time.sleep(DEFAULT_SLEEP_TIME)
             else:
                 time.sleep(15 * 60)
+    send_kill_to_server()
     signal_handler(0, 0)
 
 

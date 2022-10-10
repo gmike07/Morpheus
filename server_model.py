@@ -153,6 +153,8 @@ def get_server_model(arguments):
                     self.handle_switch(parsed_data)
                 elif 'message' in parsed_data:
                     self.hanlde_message(parsed_data)
+                elif 'kill' in parsed_data:
+                    exit()
                 else:
                     print(parsed_data)
                     arguments.logger.write("400-dct is " + str(parsed_data) +'\n')
@@ -210,7 +212,7 @@ def state_handler(arguments):
                     response = arguments.data_to_send[server_id].get()
                     response_str = json.dumps(response) + '\n'
                     response_str = response_str.encode("utf-8")
-                    response_str = response_str.ljust(100 - len(response_str), b'0')
+                    response_str = response_str.ljust(100 - len(response_str), b'0'); print('response for server', server_id, 'is', response)
                     self.request.sendall(response_str)
                 except Exception:
                     print('exception', traceback.format_exc())

@@ -140,15 +140,15 @@ enable_logging: true
 enforce_moving_live_edge: false
 experiments:
 - fingerprint:
-    abr: linear_bba
+    abr: mpc
     abr_config:
-      upper_reservoir: 0.9
-    cc: bbr
+      rebuffer_length_coeff: 50
+    cc: cubic
     cc_config:
       abr_time: true
-      buffer_length_coef: 200.0
+      buffer_length_coef: 50.0
       history_size: 8
-      model_name: constant_0
+      model_name: constant_2
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -162,15 +162,15 @@ experiments:
     - cubic
   num_servers: 1
 - fingerprint:
-    abr: linear_bba
+    abr: mpc
     abr_config:
-      upper_reservoir: 0.9
-    cc: bbr
+      rebuffer_length_coeff: 50
+    cc: cubic
     cc_config:
       abr_time: true
-      buffer_length_coef: 200.0
+      buffer_length_coef: 50.0
       history_size: 8
-      model_name: constant_0
+      model_name: constant_2
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -184,15 +184,15 @@ experiments:
     - cubic
   num_servers: 1
 - fingerprint:
-    abr: linear_bba
+    abr: mpc
     abr_config:
-      upper_reservoir: 0.9
-    cc: bbr
+      rebuffer_length_coeff: 50
+    cc: cubic
     cc_config:
       abr_time: true
-      buffer_length_coef: 200.0
+      buffer_length_coef: 50.0
       history_size: 8
-      model_name: constant_0
+      model_name: constant_2
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -206,15 +206,15 @@ experiments:
     - cubic
   num_servers: 1
 - fingerprint:
-    abr: linear_bba
+    abr: mpc
     abr_config:
-      upper_reservoir: 0.9
-    cc: bbr
+      rebuffer_length_coeff: 50
+    cc: cubic
     cc_config:
       abr_time: true
-      buffer_length_coef: 200.0
+      buffer_length_coef: 50.0
       history_size: 8
-      model_name: constant_0
+      model_name: constant_2
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -228,15 +228,15 @@ experiments:
     - cubic
   num_servers: 1
 - fingerprint:
-    abr: linear_bba
+    abr: mpc
     abr_config:
-      upper_reservoir: 0.9
-    cc: bbr
+      rebuffer_length_coeff: 50
+    cc: cubic
     cc_config:
       abr_time: true
-      buffer_length_coef: 200.0
+      buffer_length_coef: 50.0
       history_size: 8
-      model_name: constant_0
+      model_name: constant_2
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -250,15 +250,15 @@ experiments:
     - cubic
   num_servers: 1
 - fingerprint:
-    abr: linear_bba
+    abr: mpc
     abr_config:
-      upper_reservoir: 0.9
-    cc: bbr
+      rebuffer_length_coeff: 50
+    cc: cubic
     cc_config:
       abr_time: true
-      buffer_length_coef: 200.0
+      buffer_length_coef: 50.0
       history_size: 8
-      model_name: constant_0
+      model_name: constant_2
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -272,15 +272,15 @@ experiments:
     - cubic
   num_servers: 1
 - fingerprint:
-    abr: linear_bba
+    abr: mpc
     abr_config:
-      upper_reservoir: 0.9
-    cc: bbr
+      rebuffer_length_coeff: 50
+    cc: cubic
     cc_config:
       abr_time: true
-      buffer_length_coef: 200.0
+      buffer_length_coef: 50.0
       history_size: 8
-      model_name: constant_0
+      model_name: constant_2
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false
@@ -294,15 +294,15 @@ experiments:
     - cubic
   num_servers: 1
 - fingerprint:
-    abr: linear_bba
+    abr: mpc
     abr_config:
-      upper_reservoir: 0.9
-    cc: bbr
+      rebuffer_length_coeff: 50
+    cc: cubic
     cc_config:
       abr_time: true
-      buffer_length_coef: 200.0
+      buffer_length_coef: 50.0
       history_size: 8
-      model_name: constant_0
+      model_name: constant_2
       nn_roundup: 500
       quality_change_qoef: 1.0
       random_cc: false

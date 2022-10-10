@@ -71,7 +71,7 @@ fingerprint:
     # buffer_length_coef: 100.0
     # quality_change_qoef: 1.0
     scoring_function_type: "ssim" # the scoring method
-    buffer_length_coef: 200.0
+    buffer_length_coef: 50.0
     quality_change_qoef: 1.0
 
     #state params
@@ -86,9 +86,9 @@ fingerprint:
   cc: bbr # starting cc
 
   #ABRS
-  abr: linear_bba
-  abr_config:
-    upper_reservoir: 0.9
+  # abr: linear_bba
+  # abr_config:
+  #   upper_reservoir: 0.9
 
   # abr: pensieve
   # abr_config:
@@ -96,9 +96,9 @@ fingerprint:
   #   nn_path: "/home/ubuntu/puffer/models/pensieve/nn_model_ep_77400.ckpt"
 
 
-  # abr: mpc
-  # abr_config:
-  #   rebuffer_length_coeff: 100
+  abr: mpc
+  abr_config:
+    rebuffer_length_coeff: 50
 
 
   # abr: robust_mpc
@@ -182,12 +182,12 @@ dnn_model:
 
 drl_model:
   drl_layers:  [500, 200, 150, 100, 90, 80, 70, 60] 
-  drl_gamma: 0.999
+  drl_gamma: 0.5
   dlr: 3e-5
 
 reinforce_model:
   context_type: 'dnn'
-  reinforce_gamma: 0.999
+  reinforce_gamma: 0.5
   reinforce_lr: 3e-5
 
 thread_training_settings:
